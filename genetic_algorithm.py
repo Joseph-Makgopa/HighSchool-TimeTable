@@ -91,12 +91,66 @@ class GeneticAlgorithm:
 
         return 1 / ( 1 + remaining)
 
-    def crossover(self, parent_one, parent_two):
+    def crossover(self, parent_one: list, parent_two: list) -> tuple:
+        """
+            swaps the genes of two individuals(schedules)
+        """
+
+        size = len(parent_one)
+        crossover_day: int = random.randint(0,len(self.state.structure) - 1)
+        crossover_index: int = self.state.schedule_index(crossover_day)
+
+        offspring_one: list = [parent_one[count] if count < crossover_index else None for count in range(0,size)]
+        offspring_two: list = [parent_two[count] if count < crossover_index else None for count in range(0,size)]
+
+        for day_count in range(crossover_day, len(self.state.structure)):
+            
+            day: Day = self.state.structure[day_count]
+            already_assigned_educators_one: dict = {}
+            already_assigned_educators_two: dict = {}
+
+            for period in range(0, day.periods):
+                already_assigned_educators_one[period] = set()
+                already_assigned_educators_two[period] = set()
+
+            already_assigned_sessions_one: dict = {}
+            already_assigned_sessions_two: dict = {}
+
+            for grade_count in range(0, len(self.state.grades)):
+                already_assigned_sessions_one[grade_count] = set()
+                already_assigned_sessions_two[grade_count] = set()
+
+            for grade_count in range(0, len(self.state.grades)):
+                
+                for period in range(0, day.periods):
+                    
+                    index: int = self.state.schedule_index(day_count,grade_count,period)
+
+                    if offspring_one[index] == None:
+                        possible_assignments: list = available_sessions(self.state, offspring_one, \
+                            already_assigned_educators_one, already_assigned_sessions_one, grade_count, period)
+
+                        if parent_two[index] in possible_assignments:
+                            assign_session(self.state, offspring_one, parent_two[index], already_assigned_educators_one, \
+                                                already_assigned_sessions_one, day_count,grade_count,period)
+
+                    if offspring_two[index] == None:
+                        possible_assignments: list = available_sessions(self.state, offspring_two, \
+                            already_assigned_educators_two, already_assigned_sessions_two, grade_count, period)
+
+                        if parent_one[index] in possible_assignments:
+                            assign_session(self.state, offspring_one, parent_one[index], already_assigned_educators_two, \
+                                                already_assigned_sessions_two, day_count,grade_count,period)
+
+        self.repair(offspring_one)
+        self.repair(offspring_two)
+
+        return (offspring_one, offspring_two)
+
+
+    def mutate(self, individual: list) -> list:
         pass
 
-    def mutate(self, individual):
-        pass
-
-    def repair(self, individual):
+    def repair(self, individual: list):
         pass
 

@@ -66,9 +66,17 @@ class GeneticAlgorithm:
 
         return result
 
-    def initial_population(self):
-        pass
+    def initial_population(self) -> list:
+        """
+            creates the initial population for the genetic algorithm
+        """
+        result: list = list()
+        
+        for _ in range(0,self.parameters["population_size"]):
+            result.append(self.random_individual())
 
+        return result
+        
     def execute(self):
         pass
 

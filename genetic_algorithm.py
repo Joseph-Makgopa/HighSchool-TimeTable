@@ -1,7 +1,7 @@
 from models import *
 
 class GeneticAlgorithm:
-    def __init__(self,state,parameters):
+    def __init__(self, state: State, parameters: dict):
         self.state = state
         self.parameters = parameters
 
@@ -9,6 +9,7 @@ class GeneticAlgorithm:
         """
             creates a schedule with classes assigned randomly
         """
+        result: list = self.state.create_schedule()
 
         for day_count in range(0, len(self.state.structure)):
             
@@ -25,10 +26,14 @@ class GeneticAlgorithm:
 
             for grade_count in range(0, len(self.state.grades)):
                 
-                grade: str = self.state.grades[grade_count]
-
                 for period in range(0, day.periods):
-                    pass
+                    
+                    index: int = self.state.schedule_index(day_count,grade_count,period)
+
+                    if result[index] == -1:
+                        pass
+
+        return result
 
     def initial_population(self):
         pass

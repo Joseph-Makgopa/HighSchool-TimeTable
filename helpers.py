@@ -33,7 +33,7 @@ def available_sessions(state: State, schedule: list ,already_assigned_educators:
 
     return list(result.keys())
 
-def assign_single_session(state: State, schedule: list, session_id: int, already_assigned_educators: list, already_assigned_sessions: list, \
+def assign_session(state: State, schedule: list, session_id: int, already_assigned_educators: list, already_assigned_sessions: list, \
                             day_index: int, grade_index: int, period: int):
     """
         assigns a session to a single slot

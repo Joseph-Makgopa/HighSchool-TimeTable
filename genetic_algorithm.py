@@ -1,5 +1,5 @@
 from models import *
-from helpers import available_sessions
+from helpers import available_sessions,assign_session
 import random
 
 class GeneticAlgorithm:
@@ -33,13 +33,36 @@ class GeneticAlgorithm:
                     index: int = self.state.schedule_index(day_count,grade_count,period)
 
                     if result[index] == None:
-                        possible_assignments: list = available_sessions(self.state,result,already_assigned_educators,already_assigned_sessions,grade_count,period)
+                        possible_assignments: list = available_sessions(self.state, result, \
+                            already_assigned_educators, already_assigned_sessions, grade_count, period)
 
                         session_id: int = random.choice(possible_assignments)
 
                         if period == 4 or period == (day.periods - 1):
+                            assign_session(self.state, result, session_id, already_assigned_educators, \
+                                            already_assigned_sessions, day_count,grade_count,period)
 
+                        else:
+                            random_point: float = random.random()
 
+                            if random_point <= 0.4:
+                                assign_session(self.state, result, session_id, already_assigned_educators, \
+                                                already_assigned_sessions, day_count,grade_count,period)
+                            else:
+                                possible_assignments_for_next_period: list = available_sessions(self.state, \
+                                    result, already_assigned_educators, already_assigned_sessions, \
+                                        grade_count, period + 1)
+
+                                if session_id in possible_assignments_for_next_period == False:
+                                    assign_session(self.state, result, session_id, already_assigned_educators, \
+                                                already_assigned_sessions, day_count,grade_count,period)
+                                else:
+                                    assign_session(self.state, result, session_id, already_assigned_educators, \
+                                                already_assigned_sessions, day_count,grade_count,period)
+
+                                    assign_session(self.state, result, session_id, already_assigned_educators, \
+                                                already_assigned_sessions, day_count,grade_count,period + 1)
+                                    
 
         return result
 

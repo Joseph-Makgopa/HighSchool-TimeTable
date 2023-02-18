@@ -3,7 +3,6 @@
 """
 
 from enum import Enum
-from collections import Counter
 import math
 
 class WeekDay(Enum):
@@ -40,6 +39,7 @@ class Session:
 
         Session.session_count += 1
 
+
     def __str__(self) -> str:
         return "[id = {id}, educator = {educator}, grade = {grade},\
                     subject = {subject}, classes = {classes}, pair = {pair}]".\
@@ -53,6 +53,7 @@ class SplitSession(Session):
         super().__init__(educator_one,subject_one,grade,classes)
         self.split_educator = educator_two
         self.split_subject = subject_two
+
 
     def __str__(self) -> str:
         return "[id = {id}, educator one = {educator_one}, educator two = {educator_two}, \
@@ -76,12 +77,13 @@ class State:
         if schedule == None:
             self.schedule = self.create_schedule()
 
+
     def create_schedule(self) -> list:
         """
             creates an empty schedule using the schedule size
         """
         size: int = self.schedule_size()
-        result: list = [-1 for _ in range(0,size)]
+        result: list = [None for _ in range(0,size)]
 
 
     def schedule_index(self, day_index: int,grade_index: int = None,period: int = None) -> int:
@@ -99,6 +101,7 @@ class State:
             result += period
 
         return result
+
 
     def schedule_size(self) -> int:
         """
@@ -130,34 +133,6 @@ class State:
 
         return (result_day, result_grade, index)
 
-    def available_sessions(self, schedule: list ,already_assigned_teachers: dict, \
-                            already_assigned_sessions:dict, day_index: int, grade_index: int, period: int) -> list:
-        """
-            determines which sessions can be assigned to this particular slot without breaking the constraints
-
-            steps:
-            1. count the already assigned sessions
-            2. get all the sessions for this grade
-            3. remove sessions that have all their classes assigned
-            4. remove sessions with teachers that have already been assigned in period
-            5. remove sessions that have already been assigned in grade
-        """
-
-        assignments_count:Counter = Counter(schedule)
-
-        result: dict = { key:value for (key, value) in self.sessions.items() \
-                            if value.grade == self.grades[grade_index] }
-
-        result = { key:value for (key, value) in result.items \
-                            if assignments_count[key] < self.sessions[key].classes }
-
-        result = { key:value for (key, value) in result.items() \
-                            if key in already_assigned_sessions[grade_index] == False }
-
-        result = { key:value for (key, value) in result.items() \
-                            if value.educator in already_assigned_teachers[period] == False }
-
-        return result
 
         
 

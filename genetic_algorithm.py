@@ -1,4 +1,6 @@
 from models import *
+from helpers import available_sessions
+import random
 
 class GeneticAlgorithm:
     def __init__(self, state: State, parameters: dict):
@@ -30,8 +32,14 @@ class GeneticAlgorithm:
                     
                     index: int = self.state.schedule_index(day_count,grade_count,period)
 
-                    if result[index] == -1:
-                        pass
+                    if result[index] == None:
+                        possible_assignments: list = available_sessions(self.state,result,already_assigned_educators,already_assigned_sessions,grade_count,period)
+
+                        session_id: int = random.choice(possible_assignments)
+
+                        if period == 4 or period == (day.periods - 1):
+
+
 
         return result
 

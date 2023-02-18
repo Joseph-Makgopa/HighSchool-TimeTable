@@ -3,6 +3,7 @@
 """
 
 from enum import Enum
+import math
 
 class WeekDay(Enum):
     Monday = 0
@@ -76,54 +77,41 @@ class State:
         size: int = self.schedule_size()
         result: list = [-1 for _ in range(0,size)]
 
-    def schedule_index(self, day: Day,grade: str = None,period: int = None) -> int:
+
+    def schedule_index(self, day_index: int,grade_index: int = None,period: int = None) -> int:
         """
             calculates the index of the slot with the above day, grade and period in the schedule
         """
 
-        result = 0
-        day_index = 0
+        result: int = sum(self.structure[day_count].periods * len(self.grades) \
+                            for day_count in range(0, day_index))
 
-        for day_count in range(0,len(self.structure.days)):
-            day_index = day_count
+        if grade_index != None:
+            result += grade_index * self.structure[day_index].periods
 
-            if day == day.name:
-                break
-            else:
-                result += self.structure.days[day_count].periods * len(self.grades)
+        if period != None:
+            result += period
 
-        if grade == None:
-            return result
-
-        
-        for grade_count in range(0,len(self.grades)):
-            if grade == self.grades[grade_count]:
-                break
-            else:
-                result += self.structure.days[day_index].periods
-
-        if period == None:
-            return result
-            
-        return result + period
+        return result
 
     def schedule_size(self) -> int:
         """
             calculates the size of the schedule based on the structure of the table
         """
 
-        return sum(day.periods * len(self.grades) for day in self.structure.days)
+        return sum(day.periods * len(self.grades) for day in self.structure)
+
 
     def index_to_slot(self, index: int) -> tuple:
         """
             calculates the slot day, grade and period based on the schedule index
         """
 
-        result_day = 0
-        result_grade = ""
+        result_day: int = 0
+        result_grade: str = ""
 
-        for day_count in range(0,len(self.structure.days)):
-            size  = self.structure.days[day_count].periods * len(self.grades)
+        for day_count in range(0,len(self.structure)):
+            size: int  = self.structure[day_count].periods * len(self.grades)
             result_day = day_count
 
             if index >= size:
@@ -131,13 +119,8 @@ class State:
             else:
                 break
 
-        for grade_count in range(0,len(self.grades)):
-            result_grade = self.grades[grade_count]
-
-            if index >= self.structure.days[result_day].periods:
-                index -= self.structure.days[result_day].periods
-            else:
-                break
+        grade_count: int = math.floor(index / self.structure[result_day].periods)
+        index -= grade_count * self.structure[result_day].periods
 
         return (result_day, result_grade, index)
 

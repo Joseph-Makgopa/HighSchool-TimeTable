@@ -1,19 +1,33 @@
+from models import *
+
 class GeneticAlgorithm:
     def __init__(self,state,parameters):
         self.state = state
         self.parameters = parameters
 
-    def random_individual(self):
-        for day_count in range(0,len(self.state.structure.days)):
-            day = self.state.structure.days[day_count]
-            already_assigned_educator = {}
-            already_assigned_session = {}
+    def random_individual(self) -> list:
+        """
+            creates a schedule with classes assigned randomly
+        """
 
-            for grade_count in range(0,len(self.state.grades)):
-                grade = self.state.grades[grade_count]
-                already_assigned_educator[grade] = []
+        for day_count in range(0, len(self.state.structure)):
+            
+            day: Day = self.state.structure[day_count]
+            already_assigned_educators: dict = {}
 
-                for period in range(0,day.periods):
+            for period in range(0, day.periods):
+                already_assigned_educators[period] = set()
+
+            already_assigned_sessions: dict = {}
+
+            for grade_count in range(0, len(self.state.grades)):
+                already_assigned_sessions[grade_count] = set()
+
+            for grade_count in range(0, len(self.state.grades)):
+                
+                grade: str = self.state.grades[grade_count]
+
+                for period in range(0, day.periods):
                     pass
 
     def initial_population(self):

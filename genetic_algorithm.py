@@ -1,11 +1,15 @@
 from models import *
 from helpers import available_sessions,assign_session
 import random
+from collections import Counter
 
 class GeneticAlgorithm:
     def __init__(self, state: State, parameters: dict):
         self.state = state
         self.parameters = parameters
+
+    def execute(self):
+        pass
 
     def random_individual(self) -> list:
         """
@@ -77,18 +81,22 @@ class GeneticAlgorithm:
 
         return result
         
-    def execute(self):
+    def fitness(self, individual: list) -> float:
+        """
+            evaluates the fitness of the individual
+        """
+
+        assignments_count:Counter = Counter(individual)
+        remaining = sum(value.classes - assignments_count[key] for (key,value) in self.state.sessions)
+
+        return 1 / ( 1 + remaining)
+
+    def crossover(self, parent_one, parent_two):
         pass
 
-    def fitness(self,individual):
+    def mutate(self, individual):
         pass
 
-    def crossover(self,parent_one,parent_two):
-        pass
-
-    def mutate(self,individual):
-        pass
-
-    def repair(self,individual):
+    def repair(self, individual):
         pass
 
